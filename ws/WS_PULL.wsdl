@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.mf.gov.pl/uslugiBiznesowe/WsPull/Usluga/2014/01_v2_0"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    xmlns:ws="http://www.mf.gov.pl/uslugiBiznesowe/WsPull/Usluga/2014/01_v2_0">
+    
+    <wsp:Policy wsu:Id="ecipseap_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SupportingTokens
+                    xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+                    <wsp:Policy>
+                        <sp:UsernameToken
+                            sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssUsernameToken10/>
+                                <sp:HashPassword/>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SupportingTokens>
+                <wsam:Addressing
+                    xmlns:wsam="http://www.w3.org/2007/02/addressing/metadata">
+                    <wsp:Policy />
+                </wsam:Addressing>
+            </wsp:All>
+        </wsp:ExactlyOne>
+    </wsp:Policy>
+    
+    
+    <wsdl:types>        
+        
+        <xs:schema targetNamespace="http://www.mf.gov.pl/uslugiBiznesowe/WsPull/Usluga/2014/01_v2_0" 
+            xmlns="http://www.w3.org/2001/XMLSchema" 
+            elementFormDefault="qualified"
+            xmlns:common="http://www.mf.gov.pl/schematy/SISC/WsChannel/2014/01_v2_0">
+            <xs:import namespace="http://www.mf.gov.pl/schematy/SISC/WsChannel/2014/01_v2_0" schemaLocation="WS_CHANNEL.xsd"/>
+            
+            <xs:element name="AcceptDocumentRequest">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Metoda implementowana po stronie PUESC i Systemu Podmiotu Zewnętrznego służy do akcpetowania obiektu "document"                        
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Method implemented on SEAP or External System side used for passing the "document" object.  Which is request.                     
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="common:document" ></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            
+            <xs:element name="AcceptDocumentResponse">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Metoda implementowana po stronie PUESC i Systemu Podmiotu Zewnętrznego służy zwracania obiketu "result"                        
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Method implemented on SEAP or External System side used for passing the "result" object.  Which is anwer.                     
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <element ref="common:result"></element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetNextDocumentRequest">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Metoda implementowana po stronie PUESC do  zapytania o zwrócenie niepobranego dokumentu.
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Method implemented only in SEAP used for requesting new uncollected "document" object.
+                    </documentation>
+                </annotation>
+            </xs:element>
+
+            <xs:element name="GetNextDocumentResponse">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Metoda implementowana po stronie PUESC służy do zwracania niepobranego obiektu typue "document"
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Method implemented only in SEAP used for returning the uncollected "document" object.
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                	<xs:sequence>
+                		<element ref="common:document" minOccurs="0"
+                			maxOccurs="1">
+                		</element>
+                	</xs:sequence>
+                	<xs:attribute name="hasNext" type="boolean"></xs:attribute>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetNextDocumentSiscRequest">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Metoda implementowana po stronie PUESC do zapytania o zwrócenie niepobranego dokumentu. Parametr filtrowania po identyfikatorach idSisc.
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Method implemented only in SEAP used for returning the uncollected "document" object. Parameter to filter idSisc identifiers.
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="idSiscROF" type="common:idSISC"  minOccurs="0"/>
+                        <xs:element name="idSiscROP" type="common:idSISC" minOccurs="0"/>
+                        <xs:element name="idSiscP" type="common:idSISC" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetDocumentsResponse">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Metoda implementowana po stronie PUESC służy do zwracania niepobranych obiektów typue "document"
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Method implemented only in SEAP used for returning the uncollected "document" objects.
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="documentsCount" type="long"  minOccurs="0"/>
+                        <element ref="common:document" minOccurs="0" maxOccurs="unbounded"></element>
+                        <xs:element name="documentsInfo" type="xs:string" form="qualified" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GetDocumentsRequest">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Parametr filtrowania po atrybutach dokumentu
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Parameter filtering document's attributes
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="idSiscROF" type="common:idSISC" form="qualified" minOccurs="0"/>
+                        <xs:element name="idSiscROP" type="common:idSISC" form="qualified" minOccurs="0"/>
+                        <xs:element name="idSiscP" type="common:idSISC" form="qualified" minOccurs="0"/>
+                        <xs:element name="sysRef" type="xs:string" form="qualified" minOccurs="0"/>
+                        <xs:element name="idWysylki" type="xs:string" form="qualified" minOccurs="0"/>
+                        <xs:element name="idDocSysZew" type="xs:string" form="qualified" minOccurs="0"/>
+                        <xs:element name="idSprawy" type="xs:string" form="qualified" minOccurs="0"/>
+                        <xs:element name="pobrany" type="xs:string" form="qualified" minOccurs="0"/>
+                        <xs:element name="dataOd" type="xs:date" form="qualified" minOccurs="0"/>
+                        <xs:element name="dataDo" type="xs:date" form="qualified" minOccurs="0"/>
+                        <xs:element name="korelacjaSysref" type="xs:string" form="qualified" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="businessErrorFault">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Ogolna wiadomośc transportujaca błąd biznesowy.                  
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Generic business fault.                     
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <sequence>
+                        <xs:element name="error" type="common:businessErrorType">
+                        </xs:element>
+                    </sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="techErrorFault">
+                <annotation>
+                    <documentation xml:lang="PL">
+                        Ogolna wiadomośc transportujaca błąd techniczny.                  
+                    </documentation>
+                    <documentation xml:lang="EN">
+                        Generic technical fault.                     
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <sequence>
+                        <xs:element name="error" type="common:techErrorType">
+                        </xs:element>
+                    </sequence>
+                </xs:complexType>
+            </xs:element>
+            
+        </xs:schema>
+        
+    </wsdl:types>
+    
+    <wsdl:message name="AcceptDocumentRequest">
+        <wsdl:part name="AcceptDocumentRequest" element="ws:AcceptDocumentRequest"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="AcceptDocumentResponse">
+        <wsdl:part name="AcceptDocumentResponse" element="ws:AcceptDocumentResponse"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="GetNextDocumentRequest">
+        <wsdl:part name="GetNextDocumentRequest" element="ws:GetNextDocumentRequest"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="GetNextDocumentResponse">
+        <wsdl:part name="GetNextDocumentResponse" element="ws:GetNextDocumentResponse"></wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="GetNextDocumentSisc">
+        <wsdl:part name="GetNextDocumentSiscRequest" element="ws:GetNextDocumentSiscRequest"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetDocumentsResponse">
+        <wsdl:part name="GetDocumentsResponse" element="ws:GetDocumentsResponse"/>
+    </wsdl:message>
+
+    <wsdl:message name="GetDocumentsRequest">
+        <wsdl:part name="GetDocumentsRequest" element="ws:GetDocumentsRequest"/>
+    </wsdl:message>
+    
+    <wsdl:message name="businessErrorFault">
+        <wsdl:part name="businessErrorFault" element="ws:businessErrorFault"> </wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="techErrorFault">
+        <wsdl:part name="techErrorFault" element="ws:techErrorFault"> </wsdl:part>
+    </wsdl:message>
+    
+
+    
+    <wsdl:portType name="DocumentHandlingPort">
+        <wsdl:operation name="AcceptDocument">
+            <wsdl:input message="ws:AcceptDocumentRequest"></wsdl:input>
+            <wsdl:output message="ws:AcceptDocumentResponse"></wsdl:output>
+            <wsdl:fault name="businessErrorFault" message="ws:businessErrorFault"/>
+            <wsdl:fault name="techErrorFault" message="ws:techErrorFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetNextDocument">
+            <wsdl:input message="ws:GetNextDocumentRequest"></wsdl:input>
+            <wsdl:output message="ws:GetNextDocumentResponse"></wsdl:output>
+            <wsdl:fault name="businessErrorFault" message="ws:businessErrorFault"/>
+            <wsdl:fault name="techErrorFault" message="ws:techErrorFault"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetNextDocumentSisc">
+            <wsdl:input message="ws:GetNextDocumentSisc"></wsdl:input>
+            <wsdl:output message="ws:GetNextDocumentResponse"></wsdl:output>
+            <wsdl:fault message="ws:businessErrorFault" name="businessErrorFault" />
+            <wsdl:fault message="ws:techErrorFault" name="techErrorFault" />
+        </wsdl:operation>
+        <wsdl:operation name="GetDocuments">
+            <wsdl:input message="ws:GetDocumentsRequest"></wsdl:input>
+            <wsdl:output message="ws:GetDocumentsResponse"></wsdl:output>
+            <wsdl:fault message="ws:businessErrorFault" name="businessErrorFault" />
+            <wsdl:fault message="ws:techErrorFault" name="techErrorFault" />
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="DocumentHandlingBind" type="ws:DocumentHandlingPort">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsp:PolicyReference URI="#ecipseap_policy"/>
+        <wsdl:operation name="AcceptDocument">
+            <soap:operation soapAction="AcceptDocument" style="document"/>
+            <wsdl:input>
+                <soap:body parts="AcceptDocumentRequest" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="AcceptDocumentResponse" use="literal"/>   
+            </wsdl:output>
+            <wsdl:fault name="techErrorFault">
+                <soap:fault name="techErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="businessErrorFault">
+                <soap:fault name="businessErrorFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetNextDocument">
+            <soap:operation soapAction="GetNextDocument" style="document"/>
+            <wsdl:input>
+                <soap:body parts="GetNextDocumentRequest" use="literal"/> 
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="GetNextDocumentResponse" use="literal"/> 
+            </wsdl:output>
+            
+            <wsdl:fault name="techErrorFault">
+                <soap:fault name="techErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="businessErrorFault">
+                <soap:fault name="businessErrorFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetNextDocumentSisc">
+            <soap:operation soapAction="GetNextDocumentSisc" style="document"/>
+            <wsdl:input>
+                <soap:body parts="GetNextDocumentSiscRequest" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="GetNextDocumentResponse" use="literal"/>
+            </wsdl:output>
+
+            <wsdl:fault name="techErrorFault">
+                <soap:fault name="techErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="businessErrorFault">
+                <soap:fault name="businessErrorFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetDocuments">
+            <soap:operation soapAction="GetNextDocumentSisc" style="document"/>
+            <wsdl:input>
+                <soap:body parts="GetDocumentsRequest" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="GetDocumentsResponse" use="literal"/>
+            </wsdl:output>
+
+            <wsdl:fault name="techErrorFault">
+                <soap:fault name="techErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="businessErrorFault">
+                <soap:fault name="businessErrorFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="DocumentHandlingSvc">
+        <wsdl:port name="DocumentHandlingPort" binding="ws:DocumentHandlingBind">
+            <soap:address location="http://127.0.0.1/replace_me"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+    
+</wsdl:definitions>

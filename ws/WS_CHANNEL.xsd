@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.mf.gov.pl/schematy/SISC/WsChannel/2014/01_v2_0" targetNamespace="http://www.mf.gov.pl/schematy/SISC/WsChannel/2014/01_v2_0" elementFormDefault="qualified" version="2.0">
+	<element name="document" type="tns:documentType"/>
+	<element name="result" type="tns:resultType"/>
+	<complexType name="documentType">
+		<sequence>
+			<element name="content" type="tns:contentType">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Typ zawartości, tutaj należy umiescic dokument zakodowany w Base64, jego nazwę pliku i typ MIME.                        
+                    </documentation>
+					<documentation xml:lang="EN">
+                        The contentType, in this element please ensure adding valid Base64 document with filename and correct MIME type.                        
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="dispatchId" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation xml:lang="PL">
+                       Uzywane w komunikacji SEAP->PODMIOT, tutaj seap wpisze idWysyłki z CRKiD                   
+                    </documentation>
+					<documentation xml:lang="EN">
+                        used only in communication from SEAP to External System. SEAP will put the dispatching identifier here based on Central Repository.                     
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="caseId" type="string" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Uzywane w komunikacji SEAP->PODMIOT, tutaj seap wpisze idSprawe jeśli występuje dla danego dokumentu.                  
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Used only in communication from SEAP to External System. SEAP will put the case identifier from Central Repository                    
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="personSISC" type="tns:idSISC" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Uzywane w komunikacji SEAP->PODMIOT, tutaj seap wpisze idSISC osoby w kontekscie której występuje przesyłany dokument.                  
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Used only in communication from SEAP to External System. SEAP will put the SISC identifier (1st grade which belongs to person)                
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="middleSISC" type="tns:idSISC" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Uzywane w komunikacji SEAP->PODMIOT, tutaj seap wpisze idSISC pośrednika np. agencji Celnej.                
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Used only in communication from SEAP to External System. SEAP will put the SISC identifier (2nd grade which belongs to middle SISC, eg. customs agency )                
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="endSISC" type="tns:idSISC" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Uzywane w komunikacji SEAP->PODMIOT, tutaj seap wpisze idSISC końcowe  np. podmiotu reprezentowanego przez dana osobe z agencji celnej.              
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Used only in communication from SEAP to External System. SEAP will put the SISC identifier (3rd grade which belongs to end SISC, end company )                
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="attachments" type="tns:attachmentsType" minOccurs="0" maxOccurs="1">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Element opcjonalnych załączników do dokumentu głównego           
+                    </documentation>
+					<documentation xml:lang="EN">
+                        An optional element used for attachments which should be connected with main document carried by /document/content                
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="targetSystems" type="tns:targetSystemsType">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Lista systemów SISC          
+                    </documentation>
+					<documentation xml:lang="EN">
+                        The Polish Customs Systems list.               
+                    </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<simpleType name="idSISC">
+		<annotation>
+			<documentation xml:lang="PL">
+                Identyfikator Służby Celnej       
+            </documentation>
+			<documentation xml:lang="EN">
+                The Polish Customs Identifier. ID which identifies company or person across many customs systems in Poland.               
+            </documentation>
+		</annotation>
+		<restriction base="string">
+			<minLength value="10"/>
+			<maxLength value="50"/>
+		</restriction>
+	</simpleType>
+	<complexType name="attachmentsType">
+		<sequence>
+			<element name="content" type="tns:contentType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="contentType">
+		<annotation>
+			<documentation xml:lang="PL">
+                Typ określający dokument,     
+            </documentation>
+			<documentation xml:lang="EN">
+                Type of main document. Must be base64 encoded and have mime attribute.               
+            </documentation>
+		</annotation>
+		<simpleContent>
+			<extension base="base64Binary">
+				<attribute name="filename" type="string" use="optional"/>
+				<attribute name="mime" type="tns:mimeType" use="required"/>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<complexType name="targetSystemsType">
+		<sequence>
+			<element name="system" type="tns:systemType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<simpleType name="systemType">
+		<restriction base="string">
+			<enumeration value="SZPROT"/>
+			<enumeration value="AIS"/>
+			<enumeration value="OSOZ2"/>
+			<enumeration value="NCTS2"/>
+			<enumeration value="ZEFIR2"/>
+			<enumeration value="ISZTAR4"/>
+			<enumeration value="HERMES2"/>
+			<enumeration value="AES"/>
+			<enumeration value="EMCSPL2"/>
+			<enumeration value="INTRASTAT"/>
+			<enumeration value="EBT"/>
+			<enumeration value="PODMIOT">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Stała "PODMIOT" Użyta w komunikacji od SEAP do systemu Podmiotu Zewnętrznego.     
+                    </documentation>
+					<documentation xml:lang="EN">
+                        The "PODMIOT" const. value used in communication from SEAP to External System.      
+                    </documentation>
+				</annotation>
+			</enumeration>
+		</restriction>
+	</simpleType>
+	<simpleType name="mimeType">
+		<restriction base="string">
+			<enumeration value="application/pdf"/>
+			<enumeration value="application/xml"/>
+			<enumeration value="other"/>
+		</restriction>
+	</simpleType>
+	<complexType name="resultType">
+		<sequence>
+			<element name="sysRef" type="string">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Unikalny identyfikator dokumentu z Centralnego Repozytorium Komunikatów i Dokumentów.  
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Unique identifier of document submitted to Central Repository.  
+                    </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	<complexType name="businessErrorType">
+		<annotation>
+			<documentation xml:lang="PL">
+                Typ representując bład biznesowy     
+            </documentation>
+			<documentation xml:lang="EN">
+                Type which represents business error/fault.    
+            </documentation>
+		</annotation>
+		<complexContent>
+			<extension base="tns:errorType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="techErrorType">
+		<annotation>
+			<documentation xml:lang="PL">
+                Typ reprezentujący bład techniczny     
+            </documentation>
+			<documentation xml:lang="EN">
+                Type which represents technical error/fault.    
+            </documentation>
+		</annotation>
+		<complexContent>
+			<extension base="tns:errorType"/>
+		</complexContent>
+	</complexType>
+	<complexType name="errorType" abstract="true">
+		<annotation>
+			<documentation xml:lang="PL">
+                Abstrakcyjny typ błędu     
+            </documentation>
+			<documentation xml:lang="EN">
+                Abstract error type    
+            </documentation>
+		</annotation>
+		<sequence>
+			<element name="errorCode" type="string">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Abstrakcyjny kod błedu. np. E001 lub B002    
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Abstract error code, like E002 or B002   
+                    </documentation>
+				</annotation>
+			</element>
+			<element name="errorDesc" type="string">
+				<annotation>
+					<documentation xml:lang="PL">
+                        Abstrakcyjny opis błędu 
+                    </documentation>
+					<documentation xml:lang="EN">
+                        Abstract error description.  
+                    </documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+</schema>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.mf.gov.pl/uslugiBiznesowe/WsPush/Usluga/2014/01_v2_0"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:wsp="http://www.w3.org/ns/ws-policy"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    xmlns:ws="http://www.mf.gov.pl/uslugiBiznesowe/WsPush/Usluga/2014/01_v2_0">
+    
+    <wsp:Policy wsu:Id="ecipseap_policy">
+        <wsp:ExactlyOne>
+            <wsp:All>
+                <sp:SupportingTokens
+                    xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+                    <wsp:Policy>
+                        <sp:UsernameToken
+                            sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                            <wsp:Policy>
+                                <sp:WssUsernameToken10/>
+                                <sp:HashPassword/>
+                            </wsp:Policy>
+                        </sp:UsernameToken>
+                    </wsp:Policy>
+                </sp:SupportingTokens>
+                <wsam:Addressing
+                    xmlns:wsam="http://www.w3.org/2007/02/addressing/metadata">
+                    <wsp:Policy />
+                </wsam:Addressing>
+            </wsp:All>
+        </wsp:ExactlyOne>   
+    </wsp:Policy>
+    
+    
+    <wsdl:types>        
+        
+        <xs:schema targetNamespace="http://www.mf.gov.pl/uslugiBiznesowe/WsPush/Usluga/2014/01_v2_0" 
+            xmlns="http://www.w3.org/2001/XMLSchema" 
+            elementFormDefault="qualified"
+            xmlns:common="http://www.mf.gov.pl/schematy/SISC/WsChannel/2014/01_v2_0">
+            <xs:import namespace="http://www.mf.gov.pl/schematy/SISC/WsChannel/2014/01_v2_0" schemaLocation="WS_CHANNEL.xsd"/>
+            
+            <xs:element name="AcceptDocumentRequest">
+                <annotation>
+                    <documentation>
+                        Metoda akceptuje dokument wysłany przez SEAP'a do odbiorcy.
+                        SEAP wywołuje tą metodę w webservisie zaimplementowanym po stronie systemu podatnika/odbiorcy.
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="common:document" ></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            
+            <xs:element name="AcceptDocumentResponse">
+                <annotation>
+                    <documentation>
+                        Metoda zwraca informacje o tym czy przyjęto dokument do przetwarzania.
+                    </documentation>
+                </annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <element ref="common:result"></element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="businessErrorFault">
+                <annotation>
+                    <documentation>Ogólny element definiujący wiadomość (fault) o błędzie biznesowym.</documentation>
+                </annotation>
+                <xs:complexType>
+                    <sequence>
+                        <xs:element name="error" type="common:businessErrorType">
+                        </xs:element>
+                    </sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            <xs:element name="techErrorFault">
+                <annotation>
+                    <documentation>Ogólny element definiujący wiadomość (fault) o błędzie technicznym.</documentation>
+                </annotation>
+                <xs:complexType>
+                    <sequence>
+                        <xs:element name="error" type="common:techErrorType">
+                        </xs:element>
+                    </sequence>
+                </xs:complexType>
+            </xs:element>
+            
+            
+        </xs:schema>
+        
+    </wsdl:types>
+    
+    <wsdl:message name="AcceptDocumentRequest">
+        <wsdl:part name="AcceptDocumentRequest" element="ws:AcceptDocumentRequest"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="AcceptDocumentResponse">
+        <wsdl:part name="AcceptDocumentResponse" element="ws:AcceptDocumentResponse"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="businessErrorFault">
+        <wsdl:part name="businessErrorFault" element="ws:businessErrorFault"> </wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:message name="techErrorFault">
+        <wsdl:part name="techErrorFault" element="ws:techErrorFault"> </wsdl:part>
+    </wsdl:message>
+
+    
+    <wsdl:portType name="DocumentHandlingPort">
+        <wsdl:operation name="AcceptDocument">
+            <wsdl:input message="ws:AcceptDocumentRequest"></wsdl:input>
+            <wsdl:output message="ws:AcceptDocumentResponse"></wsdl:output>
+            <wsdl:fault name="businessErrorFault" message="ws:businessErrorFault"/>
+            <wsdl:fault name="techErrorFault" message="ws:techErrorFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="DocumentHandlingBind" type="ws:DocumentHandlingPort">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsp:PolicyReference URI="#ecipseap_policy"/>
+        <wsdl:operation name="AcceptDocument">
+            <soap:operation soapAction="AcceptDocument" style="document"/>
+            <wsdl:input>
+                <soap:body parts="AcceptDocumentRequest" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="AcceptDocumentResponse" use="literal"/>   
+            </wsdl:output>
+            <wsdl:fault name="techErrorFault">
+                <soap:fault name="techErrorFault" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="businessErrorFault">
+                <soap:fault name="businessErrorFault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>        
+    </wsdl:binding>
+    
+    <wsdl:service name="DocumentHandlingSvc">
+        <wsdl:port name="DocumentHandlingPort" binding="ws:DocumentHandlingBind">
+            <soap:address location="http://127.0.0.1/replace_me"/>
+        </wsdl:port>
+    </wsdl:service>
+    
+    
+</wsdl:definitions>
